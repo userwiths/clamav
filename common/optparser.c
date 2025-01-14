@@ -932,6 +932,7 @@ struct optstruct *optparse(const char *cfgfile, int argc, char **argv, int verbo
     long long numarg, lnumarg, lnumlimit;
     int regflags              = REG_EXTENDED | REG_NOSUB;
     const char *inlinecomment = NULL;
+    char *trim_comment;
 
 #ifdef _WIN32
     if (!is_initialized) {
@@ -1187,11 +1188,10 @@ struct optstruct *optparse(const char *cfgfile, int argc, char **argv, int verbo
         numarg        = -1;
         inlinecomment = strchr(arg, '#');
         if (inlinecomment != NULL) {
-            arg      = strtok(arg, "#");
-            char *p2 = NULL;
-            p2       = arg + strlen(arg) - 1;
-            while (p2 >= arg && *p2 == ' ')
-                *(p2--) = '\0';
+            arg          = strtok(arg, "#");
+            trim_comment = arg + strlen(arg) - 1;
+            while (trim_comment >= arg && *trim_comment == ' ')
+                *(trim_comment--) = '\0';
         }
         switch (optentry->argtype) {
             case CLOPT_TYPE_STRING:
