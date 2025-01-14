@@ -56,6 +56,7 @@
 #include "matcher-pcre.h"
 #include "str.h"
 #include "readdb.h"
+#include "default.h"
 
 // common
 #include "optparser.h"
@@ -1251,6 +1252,15 @@ int scanmanager(const struct optstruct *opts)
     if ((opt = optget(opts, "database"))->active) {
         while (opt) {
             if (optget(opts, "fail-if-cvd-older-than")->enabled) {
+                if (LSTAT(opt->strarg, &sb) == -1) {
+                    logg(LOGG_ERROR, "Can't access database directory/file: %s\n", opt->strarg);
+                    ret = 2;
+                    goto done;
+                }
+                if (!S_ISDIR(sb.st_mode) && !CLI_DBEXT_SIGNATURE(opt->strarg)) {
+                    opt = opt->nextarg;
+                    continue;
+                }
                 if (check_if_cvd_outdated(opt->strarg, optget(opts, "fail-if-cvd-older-than")->numarg) != CL_SUCCESS) {
                     ret = 2;
                     goto done;
@@ -1379,6 +1389,13 @@ int scanmanager(const struct optstruct *opts)
     }
 
     if ((opt = optget(opts, "max-recursion"))->active) {
+        uint32_t opt_value = opt->numarg;
+        if ((0 == opt_value) || (opt_value > CLI_MAX_MAXRECLEVEL)) {
+            logg(LOGG_ERROR, "max-recursion set to %u, but  cannot be larger than %u, and cannot be 0.\n",
+                 opt_value, CLI_MAX_MAXRECLEVEL);
+            ret = 2;
+            goto done;
+        }
         if ((ret = cl_engine_set_num(engine, CL_ENGINE_MAX_RECURSION, opt->numarg))) {
             logg(LOGG_ERROR, "cli_engine_set_num(CL_ENGINE_MAX_RECURSION) failed: %s\n", cl_strerror(ret));
             ret = 2;
@@ -1555,6 +1572,10 @@ int scanmanager(const struct optstruct *opts)
     if ((optget(opts, "algorithmic-detection")->enabled) && /* && used due to default-yes for both options */
         (optget(opts, "heuristic-alerts")->enabled)) {
         options.general |= CL_SCAN_GENERAL_HEURISTICS;
+    }
+
+    if (optget(opts, "json-store-html-urls")->enabled) {
+        options.general |= CL_SCAN_GENERAL_STORE_HTML_URLS;
     }
 
     /* TODO: Remove deprecated option in a future feature release */

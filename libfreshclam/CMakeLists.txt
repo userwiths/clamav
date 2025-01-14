@@ -52,7 +52,7 @@ if(ENABLE_SHARED_LIB)
         target_link_libraries( freshclam
             PUBLIC
                 network )
-    elseif(UNIX)
+    elseif(UNIX AND NOT AIX)
         if(HAVE_RESOLV_H AND NOT C_BSD) # BSD appears to have libresolv inside libc
             target_link_libraries( freshclam
                 PUBLIC
@@ -62,12 +62,13 @@ if(ENABLE_SHARED_LIB)
 
     if(WIN32)
         set_target_properties(freshclam PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
-    elseif(UNIX AND NOT APPLE)
+    elseif(UNIX AND NOT APPLE AND NOT AIX)
         target_link_options(freshclam PRIVATE "-Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/libfreshclam.map")
     endif()
     set_target_properties(freshclam PROPERTIES
         COMPILE_FLAGS "${WARNCFLAGS}"
-        VERSION ${LIBFRESHCLAM_VERSION} SOVERSION ${LIBFRESHCLAM_SOVERSION})
+        VERSION ${LIBFRESHCLAM_VERSION} SOVERSION ${LIBFRESHCLAM_SOVERSION}
+        LINK_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/libfreshclam.map)
     if(WIN32)
         install(TARGETS freshclam DESTINATION . COMPONENT libraries)
         install(FILES $<TARGET_PDB_FILE:freshclam> DESTINATION . OPTIONAL COMPONENT libraries)

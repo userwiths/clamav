@@ -69,7 +69,7 @@
  * in re-enabling affected modules.
  */
 
-#define CL_FLEVEL 210
+#define CL_FLEVEL 220
 #define CL_FLEVEL_DCONF CL_FLEVEL
 #define CL_FLEVEL_SIGTOOL CL_FLEVEL
 
@@ -552,6 +552,7 @@ extern LIBCLAMAV_EXPORT int have_rar;
 #define SCAN_HEURISTICS (ctx->options->general & CL_SCAN_GENERAL_HEURISTICS)
 #define SCAN_HEURISTIC_PRECEDENCE (ctx->options->general & CL_SCAN_GENERAL_HEURISTIC_PRECEDENCE)
 #define SCAN_UNPRIVILEGED (ctx->options->general & CL_SCAN_GENERAL_UNPRIVILEGED)
+#define SCAN_STORE_HTML_URLS (ctx->options->general & CL_SCAN_GENERAL_STORE_HTML_URLS)
 
 #define SCAN_PARSE_ARCHIVE (ctx->options->parse & CL_SCAN_PARSE_ARCHIVE)
 #define SCAN_PARSE_ELF (ctx->options->parse & CL_SCAN_PARSE_ELF)

@@ -389,6 +389,7 @@ const struct clam_option __clam_options[] = {
     {"PhishingScanURLs", "phishing-scan-urls", 0, CLOPT_TYPE_BOOL, MATCH_BOOL, 1, NULL, 0, OPT_CLAMD | OPT_CLAMSCAN, "Scan URLs found in mails for phishing attempts using heuristics.", "yes"},
 
     {"HeuristicAlerts", "heuristic-alerts", 0, CLOPT_TYPE_BOOL, MATCH_BOOL, 1, NULL, 0, OPT_CLAMD | OPT_CLAMSCAN, "In some cases (eg. complex malware, exploits in graphic files, and others),\nClamAV uses special algorithms to provide accurate detection. This option\ncontrols the algorithmic detection.", "yes"},
+    {"JsonStoreHTMLUrls", "json-store-html-urls", 0, CLOPT_TYPE_BOOL, MATCH_BOOL, 1, NULL, 0, OPT_CLAMD | OPT_CLAMSCAN, "Store URLs found in HTML <form and <a tags.", "yes"},
 
     {"HeuristicScanPrecedence", "heuristic-scan-precedence", 0, CLOPT_TYPE_BOOL, MATCH_BOOL, 0, NULL, 0, OPT_CLAMD | OPT_CLAMSCAN, "Allow heuristic match to take precedence.\nWhen enabled, if a heuristic scan (such as phishingScan) detects\na possible virus/phish it will stop scan immediately. Recommended, saves CPU\nscan-time.\nWhen disabled, virus/phish detected by heuristic scans will be reported only\nat the end of a scan. If an archive contains both a heuristically detected\nvirus/phish, and a real malware, the real malware will be reported.\nKeep this disabled if you intend to handle \"Heuristics.*\" viruses\ndifferently from \"real\" malware.\nIf a non-heuristically-detected virus (signature-based) is found first,\nthe scan is interrupted immediately, regardless of this config option.", "yes"},
 
@@ -930,9 +931,14 @@ struct optstruct *optparse(const char *cfgfile, int argc, char **argv, int verbo
     char shortopts[MAXCMDOPTS];
     regex_t regex;
     long long numarg, lnumarg, lnumlimit;
+<<<<<<< HEAD
     int regflags              = REG_EXTENDED | REG_NOSUB;
     const char *inlinecomment = NULL;
     char *trim_comment;
+=======
+    int regflags = REG_EXTENDED | REG_NOSUB;
+    const char* inlinecomment = NULL;
+>>>>>>> 8e9d15f37faa16b1f40a8b44c6fa6aa6cc89e206
 
 #ifdef _WIN32
     if (!is_initialized) {
@@ -1185,6 +1191,7 @@ struct optstruct *optparse(const char *cfgfile, int argc, char **argv, int verbo
             }
         }
 
+<<<<<<< HEAD
         numarg        = -1;
         inlinecomment = strchr(arg, '#');
         if (inlinecomment != NULL) {
@@ -1192,6 +1199,12 @@ struct optstruct *optparse(const char *cfgfile, int argc, char **argv, int verbo
             trim_comment = arg + strlen(arg) - 1;
             while (trim_comment >= arg && *trim_comment == ' ')
                 *(trim_comment--) = '\0';
+=======
+        numarg = -1;
+        inlinecomment = strchr(arg, '#');
+        if (inlinecomment != NULL) {
+            arg = strtok(arg, "#");
+>>>>>>> 8e9d15f37faa16b1f40a8b44c6fa6aa6cc89e206
         }
         switch (optentry->argtype) {
             case CLOPT_TYPE_STRING:
